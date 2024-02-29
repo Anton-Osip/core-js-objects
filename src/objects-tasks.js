@@ -17,8 +17,10 @@
  *    shallowCopy({a: 2, b: { a: [1, 2, 3]}}) => {a: 2, b: { a: [1, 2, 3]}}
  *    shallowCopy({}) => {}
  */
-function shallowCopy(/* obj */) {
-  throw new Error('Not implemented');
+function shallowCopy(obj) {
+  const newObj = {};
+  Object.assign(newObj, obj);
+  return newObj;
 }
 
 /**
@@ -32,8 +34,20 @@ function shallowCopy(/* obj */) {
  *    mergeObjects([{a: 1, b: 2}, {b: 3, c: 5}]) => {a: 1, b: 5, c: 5}
  *    mergeObjects([]) => {}
  */
-function mergeObjects(/* objects */) {
-  throw new Error('Not implemented');
+function mergeObjects(objects) {
+  const newObj = {};
+  objects.forEach((obj) => {
+    const arr = Object.entries(obj);
+    arr.forEach((item) => {
+      const [key, value] = item;
+      if (Object.hasOwn(newObj, key)) {
+        newObj[key] += value;
+      } else {
+        newObj[key] = value;
+      }
+    });
+  });
+  return newObj;
 }
 
 /**
@@ -49,8 +63,12 @@ function mergeObjects(/* objects */) {
  *    removeProperties({name: 'John', age: 30, city: 'New York'}, 'age') => {name: 'John', city: 'New York'}
  *
  */
-function removeProperties(/* obj, keys */) {
-  throw new Error('Not implemented');
+function removeProperties(obj, keys) {
+  const newOnj = { ...obj };
+  keys.forEach((key) => {
+    delete newOnj[key];
+  });
+  return newOnj;
 }
 
 /**
@@ -65,8 +83,9 @@ function removeProperties(/* obj, keys */) {
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 2}) => true
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 3}) => false
  */
-function compareObjects(/* obj1, obj2 */) {
-  throw new Error('Not implemented');
+function compareObjects(obj1, obj2) {
+  const isEqual = JSON.stringify(obj1) === JSON.stringify(obj2);
+  return isEqual; // true
 }
 
 /**
@@ -80,8 +99,9 @@ function compareObjects(/* obj1, obj2 */) {
  *    isEmptyObject({}) => true
  *    isEmptyObject({a: 1}) => false
  */
-function isEmptyObject(/* obj */) {
-  throw new Error('Not implemented');
+function isEmptyObject(obj) {
+  if (Object.keys(obj).length === 0) return true;
+  return false;
 }
 
 /**
@@ -100,8 +120,8 @@ function isEmptyObject(/* obj */) {
  *    immutableObj.newProp = 'new';
  *    console.log(immutableObj) => {a: 1, b: 2}
  */
-function makeImmutable(/* obj */) {
-  throw new Error('Not implemented');
+function makeImmutable(obj) {
+  return Object.freeze(obj);
 }
 
 /**
@@ -114,8 +134,17 @@ function makeImmutable(/* obj */) {
  *    makeWord({ a: [0, 1], b: [2, 3], c: [4, 5] }) => 'aabbcc'
  *    makeWord({ H:[0], e: [1], l: [2, 3, 8], o: [4, 6], W:[5], r:[7], d:[9]}) => 'HelloWorld'
  */
-function makeWord(/* lettersObject */) {
-  throw new Error('Not implemented');
+function makeWord(lettersObject) {
+  const res = [];
+  const arr = Object.entries(lettersObject);
+  arr.forEach((item) => {
+    const [key, values] = item;
+    values.forEach((value) => {
+      res[value] = key;
+    });
+  });
+  if (res.length === 0) return '';
+  return res.join('');
 }
 
 /**
@@ -132,8 +161,27 @@ function makeWord(/* lettersObject */) {
  *    sellTickets([25, 25, 50]) => true
  *    sellTickets([25, 100]) => false (The seller does not have enough money to give change.)
  */
-function sellTickets(/* queue */) {
-  throw new Error('Not implemented');
+function sellTickets(queue) {
+  let res = true;
+  let money = 0;
+  queue.forEach((item) => {
+    switch (item) {
+      case 25:
+        money += 25;
+        break;
+      case 50:
+        if (money < 25) res = false;
+        money += 25;
+        break;
+      case 100:
+        if (money < 75) res = false;
+        money += 25;
+        break;
+      default:
+        break;
+    }
+  });
+  return res;
 }
 
 /**
@@ -149,8 +197,12 @@ function sellTickets(/* queue */) {
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  this.width = width;
+  this.height = height;
+  this.getArea = () => {
+    return this.width * this.height;
+  };
 }
 
 /**
@@ -163,8 +215,8 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
 
 /**
@@ -180,6 +232,8 @@ function getJSON(/* obj */) {
  */
 function fromJSON(/* proto, json */) {
   throw new Error('Not implemented');
+  // const arr = Object.values(JSON.parse(json));
+  // return proto([...arr]);
 }
 
 /**
@@ -208,8 +262,25 @@ function fromJSON(/* proto, json */) {
  *      { country: 'Russia',  city: 'Saint Petersburg' }
  *    ]
  */
-function sortCitiesArray(/* arr */) {
-  throw new Error('Not implemented');
+function sortCitiesArray(arr) {
+  return arr.sort((item1, item2) => {
+    if (item1.country.toLowerCase() < item2.country.toLowerCase()) {
+      return -1;
+    }
+    if (item1.country.toLowerCase() > item2.country.toLowerCase()) {
+      return 1;
+    }
+    if (item1.country.toLowerCase() === item2.country.toLowerCase()) {
+      if (item1.city.toLowerCase() < item2.city.toLowerCase()) {
+        return -1;
+      }
+      if (item1.city.toLowerCase() > item2.city.toLowerCase()) {
+        return 1;
+      }
+      return 0;
+    }
+    return 0;
+  });
 }
 
 /**
@@ -242,8 +313,23 @@ function sortCitiesArray(/* arr */) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const arr = [];
+  array.forEach((item) => {
+    arr.push(keySelector(item));
+  });
+  const map = new Set(arr);
+  const res = [];
+  map.forEach((mapItem) => {
+    const value = [];
+    array.forEach((item) => {
+      if (mapItem === keySelector(item)) {
+        value.push(valueSelector(item));
+      }
+    });
+    res.push([mapItem, value]);
+  });
+  return res;
 }
 
 /**
@@ -301,28 +387,58 @@ function group(/* array, keySelector, valueSelector */) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    return {
+      element: value,
+      stringify() {
+        return this.element;
+      },
+    };
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return {
+      id: `#${value}`,
+      stringify() {
+        return this.id;
+      },
+    };
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return {
+      class: `.${value}`,
+      stringify() {
+        return this.class;
+      },
+    };
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return {
+      attr: `[${value}]`,
+      stringify() {
+        return this.attr;
+      },
+    };
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return {
+      pseudoClass: `:${value}`,
+      stringify() {
+        return this.pseudoClass;
+      },
+    };
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    return {
+      pseudoElement: `::${value}`,
+      stringify() {
+        return this.pseudoElement;
+      },
+    };
   },
 
   combine(/* selector1, combinator, selector2 */) {
